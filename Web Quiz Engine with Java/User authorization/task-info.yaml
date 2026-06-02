@@ -10,6 +10,7 @@ files:
     visible: true
     learner_created: false
   - name: test/tests/WebQuizEngineTest.java
+    visible: true
     learner_created: false
 feedback_link: https://hyperskill.org/projects/91/stages/508/implement#comment
 status: Unchecked
