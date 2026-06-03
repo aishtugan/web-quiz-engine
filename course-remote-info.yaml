@@ -3,7 +3,7 @@ hyperskill_project:
   ide_files: https://hyperskill.org/api/projects/91/additional-files/additional_files.json
   is_template_based: false
   use_ide: true
-update_date: "Tue, 02 Jun 2026 00:15:56 UTC"
+update_date: "Wed, 03 Jun 2026 01:12:46 UTC"
 stages:
   - id: 504
     step: 8252
@@ -13,7 +13,7 @@ stages:
     is_completed: true
   - id: 506
     step: 8254
-    is_completed: false
+    is_completed: true
   - id: 507
     step: 8255
     is_completed: false
@@ -185,6 +185,10 @@ topics:
       theory_id: 9640
     - title: Introduction to software architecture
       theory_id: 15368
+    - title: What are collections
+      theory_id: 3770
+    - title: The Collections framework overview
+      theory_id: 3624
     - title: YAML
       theory_id: 12722
     - title: "Synchronous, asynchronous, parallel"
@@ -227,12 +231,6 @@ topics:
       theory_id: 3493
     - title: Lambda expressions
       theory_id: 11635
-    - title: What are collections
-      theory_id: 3770
-    - title: The Collections framework overview
-      theory_id: 3624
-    - title: ArrayList
-      theory_id: 3567
     - title: The List interface
       theory_id: 3581
     - title: The Set interface
@@ -295,6 +293,8 @@ topics:
       theory_id: 3595
     - title: Declaring functionality with interfaces
       theory_id: 3615
+    - title: ArrayList
+      theory_id: 3567
   1:
     - title: IoC Container
       theory_id: 16851
@@ -508,7 +508,7 @@ topics:
       theory_id: 8627
     - title: Limit and Offset
       theory_id: 18793
-    - title: Stack
-      theory_id: 20203
     - title: Iterator and Iterable
       theory_id: 3574
+    - title: Stack
+      theory_id: 20203
