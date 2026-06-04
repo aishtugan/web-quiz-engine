@@ -21,14 +21,13 @@ public class QuizService {
 
     public QuizResponse createQuiz(QuizRequest request) {
         Quiz quiz = new Quiz(
-                0,
                 request.title(),
                 request.text(),
                 request.options(),
                 request.answer()
         );
 
-        Quiz savedQuiz = quizRepository.saveInBase(quiz);
+        Quiz savedQuiz = quizRepository.save(quiz);
 
         return toResponse(savedQuiz);
 
@@ -38,31 +37,27 @@ public class QuizService {
         return quizRepository.findById(id);
     }
 
-    private boolean hasValidAnswerIndexes(QuizRequest request) {
-        return request.answer().stream()
-                .allMatch(answer -> answer >= 0 && answer < request.options().size());
-    }
-
     public QuizResult solveQuiz(Quiz quiz, AnswerRequest answerRequest) {
 
-        boolean isCorrect = Set.copyOf(answerRequest.answer()).equals(Set.copyOf(quiz.answer()));
+        boolean isCorrect = Set.copyOf(answerRequest.answer()).equals(Set.copyOf(quiz.getAnswer()));
         return new QuizResult(isCorrect,
                                 isCorrect ? "Congratulations, you're right!" : "Wrong answer! Please, try again.");
     }
 
     public List<QuizResponse> getAllAsResponse() {
-        Collection<Quiz> quizzes = quizRepository.findAll();
-        return quizzes.stream()
+
+        return quizRepository.findAll()
+                .stream()
                 .map(this::toResponse)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public QuizResponse toResponse(Quiz quiz) {
         return new QuizResponse(
-                quiz.id(),
-                quiz.title(),
-                quiz.text(),
-                quiz.options()
+                quiz.getId(),
+                quiz.getTitle(),
+                quiz.getText(),
+                quiz.getOptions()
         );
     }
 
