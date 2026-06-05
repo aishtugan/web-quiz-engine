@@ -10,3 +10,4 @@ out/
 
 *.class
 *.log
+*.mv.db

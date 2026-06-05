@@ -10,7 +10,7 @@ import java.util.List;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/quizzes")
+@RequestMapping
 public class QuizController {
     private final QuizService quizService;
 
@@ -18,7 +18,7 @@ public class QuizController {
         this.quizService = quizService;
     }
 
-    @PostMapping
+    @PostMapping("/api/quizzes")
     public ResponseEntity<QuizResponse> postQuizzes(@Valid @RequestBody QuizRequest quizRequest) {
 
         QuizResponse quizResponse = quizService.createQuiz(quizRequest);
@@ -26,7 +26,20 @@ public class QuizController {
 
     }
 
-    @PostMapping("/{id}/solve")
+    @PostMapping("/api/register")
+    public ResponseEntity<String> createUser(@Valid @RequestBody UserRequest userRequest) {
+
+        quizService.createUser(userRequest);
+        return ResponseEntity.ok("User created successfully!");
+
+    }
+
+    @PostMapping("/actuator/shutdown")
+    public ResponseEntity<String> actuatorShutdown() {
+        return ResponseEntity.ok("OK");
+    }
+
+    @PostMapping("/api/quizzes/{id}/solve")
     public ResponseEntity<QuizResult> postSolveQuiz(@PathVariable Integer id, @RequestBody AnswerRequest answerRequest) {
 
         Quiz foundQuiz = quizService.findById(id).orElse(null);
@@ -39,7 +52,7 @@ public class QuizController {
 
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/api/quizzes/{id}")
     public ResponseEntity<QuizResponse> getQuizById(@PathVariable Integer id) {
         Quiz foundQuiz = quizService.findById(id).orElse(null);
 
@@ -49,8 +62,17 @@ public class QuizController {
         return ResponseEntity.ok(quizService.toResponse(foundQuiz));
     }
 
-    @GetMapping
+    @GetMapping("/api/quizzes")
     public ResponseEntity<List<QuizResponse>> getQuizzes() {
         return ResponseEntity.ok(quizService.getAllAsResponse());
+    }
+
+    @DeleteMapping("/api/quizzes/{id}")
+    public ResponseEntity<String> deleteQuiz(@PathVariable Integer id) {
+        if (quizService.findById(id).isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        quizService.deleteQuiz(id);
+        return ResponseEntity.noContent().build();
     }
 }

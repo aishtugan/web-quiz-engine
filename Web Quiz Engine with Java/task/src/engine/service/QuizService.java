@@ -2,21 +2,27 @@ package engine.service;
 
 import engine.model.*;
 import engine.repository.QuizRepository;
+import engine.repository.UserRepository;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class QuizService {
 
     private final QuizRepository quizRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public QuizService(QuizRepository quizRepository) {
+    public QuizService(QuizRepository quizRepository, UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.quizRepository = quizRepository;
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public QuizResponse createQuiz(QuizRequest request) {
@@ -44,6 +50,10 @@ public class QuizService {
                                 isCorrect ? "Congratulations, you're right!" : "Wrong answer! Please, try again.");
     }
 
+    public void deleteQuiz(Integer id) {
+        quizRepository.deleteById(id);
+    }
+
     public List<QuizResponse> getAllAsResponse() {
 
         return quizRepository.findAll()
@@ -59,6 +69,24 @@ public class QuizService {
                 quiz.getText(),
                 quiz.getOptions()
         );
+    }
+
+    public void createUser(UserRequest request) {
+
+        if (userRepository.existsByEmail(request.email())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email is already taken");
+        }
+
+        User user = new User(
+                request.email(),
+                passwordEncoder.encode(request.password())
+        );
+
+        userRepository.save(user);
+    }
+
+    public boolean passwordMatches(String rawPassword, User user) {
+        return passwordEncoder.matches(rawPassword, user.getPassword());
     }
 
 }
