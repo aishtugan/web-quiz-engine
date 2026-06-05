@@ -25,12 +25,13 @@ public class QuizService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public QuizResponse createQuiz(QuizRequest request) {
+    public QuizResponse createQuiz(QuizRequest request, String userEmail) {
         Quiz quiz = new Quiz(
                 request.title(),
                 request.text(),
                 request.options(),
-                request.answer()
+                request.answer(),
+                userEmail
         );
 
         Quiz savedQuiz = quizRepository.save(quiz);
@@ -50,7 +51,14 @@ public class QuizService {
                                 isCorrect ? "Congratulations, you're right!" : "Wrong answer! Please, try again.");
     }
 
-    public void deleteQuiz(Integer id) {
+    public void deleteQuiz(Integer id, String userEmail) {
+        Quiz quiz = quizRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Quiz not found"));
+
+        if (!quiz.getUserEmail().equals(userEmail)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not authorized to delete this quiz");
+        }
+
         quizRepository.deleteById(id);
     }
 

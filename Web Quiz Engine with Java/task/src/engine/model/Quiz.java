@@ -38,15 +38,19 @@ public class Quiz {
     @Fetch(FetchMode.SUBSELECT)
     private List<Integer> answer = new ArrayList<>();
 
+    @OrderColumn(name = "user_email")
+    private String userEmail;
+
     public Quiz() {
 
     }
 
-    public Quiz(String title, String text, List<String> options, List<Integer> answer) {
+    public Quiz(String title, String text, List<String> options, List<Integer> answer, String userEmail) {
         this.title = title;
         this.text = text;
         this.options = options;
         this.answer = answer;
+        this.userEmail = userEmail;
     }
 
     public Integer getId() {
@@ -69,5 +73,8 @@ public class Quiz {
         return answer;
     }
 
+    public String getUserEmail() {
+        return userEmail;
+    }
 }
 

@@ -3,6 +3,7 @@ package engine.controller;
 import engine.model.*;
 import engine.service.QuizService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,9 +20,9 @@ public class QuizController {
     }
 
     @PostMapping("/api/quizzes")
-    public ResponseEntity<QuizResponse> postQuizzes(@Valid @RequestBody QuizRequest quizRequest) {
+    public ResponseEntity<QuizResponse> postQuizzes(@Valid @RequestBody QuizRequest quizRequest, Authentication authentication) {
 
-        QuizResponse quizResponse = quizService.createQuiz(quizRequest);
+        QuizResponse quizResponse = quizService.createQuiz(quizRequest, authentication.getName());
         return ResponseEntity.ok(quizResponse);
 
     }
@@ -68,11 +69,12 @@ public class QuizController {
     }
 
     @DeleteMapping("/api/quizzes/{id}")
-    public ResponseEntity<String> deleteQuiz(@PathVariable Integer id) {
+    public ResponseEntity<String> deleteQuiz(@PathVariable Integer id, Authentication authentication) {
+
         if (quizService.findById(id).isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        quizService.deleteQuiz(id);
+        quizService.deleteQuiz(id, authentication.getName());
         return ResponseEntity.noContent().build();
     }
 }
