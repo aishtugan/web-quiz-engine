@@ -12,6 +12,55 @@ files:
   - name: test/tests/WebQuizEngineTest.java
     visible: true
     learner_created: false
+  - name: src/engine/service/QuizService.java
+    visible: true
+    learner_created: false
+  - name: src/engine/model/QuizRequest.java
+    visible: true
+    learner_created: false
+  - name: src/engine/model/QuizResponse.java
+    visible: true
+    learner_created: false
+  - name: src/engine/model/AnswerRequest.java
+    visible: true
+    learner_created: false
+  - name: src/engine/model/Quiz.java
+    visible: true
+    learner_created: false
+  - name: src/engine/repository/QuizRepository.java
+    visible: true
+    learner_created: false
+  - name: src/engine/model/QuizResult.java
+    visible: true
+    learner_created: false
+  - name: src/engine/controller/QuizController.java
+    visible: true
+    learner_created: false
+  - name: src/engine/model/User.java
+    visible: true
+    learner_created: false
+  - name: src/engine/model/UserRequest.java
+    visible: true
+    learner_created: false
+  - name: src/engine/repository/UserRepository.java
+    visible: true
+    learner_created: false
+  - name: src/engine/config/SecurityConfig.java
+    visible: true
+    learner_created: false
+  - name: src/engine/model/QuizHistory.java
+    visible: true
+    learner_created: true
+  - name: src/engine/model/QuizCompletionResponse.java
+    visible: true
+    learner_created: true
+  - name: src/engine/repository/QuizHistoryRepository.java
+    visible: true
+    learner_created: true
 feedback_link: https://hyperskill.org/projects/91/stages/509/implement#comment
-status: Unchecked
+status: Solved
+feedback:
+  message: Well done! You've finished the project. Select a new project on <a href="https://hyperskill.org/projects">Hyperskill</a>
+    to continue learning.
+  time: "Tue, 09 Jun 2026 02:25:10 UTC"
 record: -1

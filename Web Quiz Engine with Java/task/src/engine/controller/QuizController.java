@@ -2,11 +2,10 @@ package engine.controller;
 
 import engine.model.*;
 import engine.service.QuizService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 import jakarta.validation.Valid;
 
@@ -41,7 +40,7 @@ public class QuizController {
     }
 
     @PostMapping("/api/quizzes/{id}/solve")
-    public ResponseEntity<QuizResult> postSolveQuiz(@PathVariable Integer id, @RequestBody AnswerRequest answerRequest) {
+    public ResponseEntity<QuizResult> postSolveQuiz(@PathVariable Integer id, @RequestBody AnswerRequest answerRequest, Authentication authentication) {
 
         Quiz foundQuiz = quizService.findById(id).orElse(null);
 
@@ -49,7 +48,7 @@ public class QuizController {
             return ResponseEntity.notFound().build();
         }
 
-        return ResponseEntity.ok(quizService.solveQuiz(foundQuiz, answerRequest));
+        return ResponseEntity.ok(quizService.solveQuiz(foundQuiz, answerRequest, authentication.getName()));
 
     }
 
@@ -64,8 +63,13 @@ public class QuizController {
     }
 
     @GetMapping("/api/quizzes")
-    public ResponseEntity<List<QuizResponse>> getQuizzes() {
-        return ResponseEntity.ok(quizService.getAllAsResponse());
+    public ResponseEntity<Page<QuizResponse>> getQuizzes(@RequestParam(defaultValue = "0") Integer page) {
+        return ResponseEntity.ok(quizService.getQuizzes(page));
+    }
+
+    @GetMapping("/api/quizzes/completed")
+    public ResponseEntity<Page<QuizCompletionResponse>> getCompletedQuizzes(@RequestParam(defaultValue = "0") Integer page, Authentication authentication) {
+        return ResponseEntity.ok(quizService.getCompletedResponses(authentication.getName(), page));
     }
 
     @DeleteMapping("/api/quizzes/{id}")

@@ -1,13 +1,18 @@
 package engine.service;
 
 import engine.model.*;
+import engine.repository.QuizHistoryRepository;
 import engine.repository.QuizRepository;
 import engine.repository.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -17,12 +22,13 @@ public class QuizService {
 
     private final QuizRepository quizRepository;
     private final UserRepository userRepository;
+    private final QuizHistoryRepository quizHistoryRepository;
     private final PasswordEncoder passwordEncoder;
-
-    public QuizService(QuizRepository quizRepository, UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public QuizService(QuizRepository quizRepository, UserRepository userRepository, PasswordEncoder passwordEncoder, QuizHistoryRepository quizHistoryRepository) {
         this.quizRepository = quizRepository;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.quizHistoryRepository = quizHistoryRepository;
     }
 
     public QuizResponse createQuiz(QuizRequest request, String userEmail) {
@@ -44,9 +50,13 @@ public class QuizService {
         return quizRepository.findById(id);
     }
 
-    public QuizResult solveQuiz(Quiz quiz, AnswerRequest answerRequest) {
+    public QuizResult solveQuiz(Quiz quiz, AnswerRequest answerRequest, String userEmail) {
 
         boolean isCorrect = Set.copyOf(answerRequest.answer()).equals(Set.copyOf(quiz.getAnswer()));
+
+        if (isCorrect) {
+            quizHistoryRepository.save(new QuizHistory(quiz.getId(), userEmail, LocalDateTime.now()));
+        }
         return new QuizResult(isCorrect,
                                 isCorrect ? "Congratulations, you're right!" : "Wrong answer! Please, try again.");
     }
@@ -70,6 +80,12 @@ public class QuizService {
                 .toList();
     }
 
+    public Page<QuizResponse> getQuizzes(Integer page) {
+        Pageable pageable = PageRequest.of(page, 10);
+        return quizRepository.findAll(pageable)
+                .map(this::toResponse);
+    }
+
     public QuizResponse toResponse(Quiz quiz) {
         return new QuizResponse(
                 quiz.getId(),
@@ -77,6 +93,16 @@ public class QuizService {
                 quiz.getText(),
                 quiz.getOptions()
         );
+    }
+
+    public Page<QuizCompletionResponse> getCompletedResponses(String userEmail, Integer page) {
+        Pageable pageable = PageRequest.of(page, 10);
+        return quizHistoryRepository.findByUserEmailOrderByCompletedAtDesc(userEmail, pageable)
+                .map(this::toCompletionResponse);
+    }
+
+    private QuizCompletionResponse toCompletionResponse(QuizHistory quizHistory) {
+        return new QuizCompletionResponse(quizHistory.getQuizId(), quizHistory.getCompletedAt());
     }
 
     public void createUser(UserRequest request) {
